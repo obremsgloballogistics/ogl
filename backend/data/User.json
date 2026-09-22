@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "mt0uhpk8dikslz",
+    "name": "John Mensah",
+    "email": "admin@obrems.com",
+    "password": "$2b$10$hSTVOY3/RWu5C4SfGnZ/ouTNbuF050ijMmj2EH40.OxxpNQ1ae61G",
+    "role": "Super Admin",
+    "active": true,
+    "createdAt": "2026-08-20T01:31:52.616Z",
+    "updatedAt": "2026-09-09T01:13:45.363Z"
+  },
+  {
+    "_id": "mtthfn6oqcup2i",
+    "name": "SETH OWUSU",
+    "email": "kwabena2568@gmail.com",
+    "password": "$2b$10$qqSIXPgxNUPCrRFZSREX4urREeFvNR1usCGnXeqD5ivXYtvICRZx6",
+    "role": "Dispatcher",
+    "active": true,
+    "permissions": [
+      "dashboard",
+      "qrCode",
+      "invoices"
+    ],
+    "phone": "+233598716290",
+    "mustChangePassword": true,
+    "status": "Active",
+    "createdAt": "2026-09-09T02:31:40.320Z",
+    "updatedAt": "2026-09-09T02:35:20.732Z"
+  }
+]

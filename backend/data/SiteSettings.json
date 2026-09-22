@@ -1,0 +1,322 @@
+[
+  {
+    "_id": "mt0uhpdrnj482j",
+    "companyName": "OBREMS GLOBAL LOGISTICS",
+    "registrationNumber": "OGL-REG-847291",
+    "website": "https://www.obremsglobal.com",
+    "logoUrl": "/uploads/img_1789174801210_gahlja.webp",
+    "faviconUrl": "/uploads/img_1789174821386_zpyoew.webp",
+    "primaryEmail": "info@obremsgloballogistics.com",
+    "billingEmail": "billing@obremsgloballogistics.com",
+    "supportEmail": "support@obremsgloballogistics.com",
+    "contactPhone": "+44 7460 554358",
+    "contactWhatsApp": "+44 7460 554358",
+    "officeUk": "123 Logistics Way, London, UK",
+    "officeChina": "Guangzhou, China",
+    "officeGhana": "Accra, Greater Accra Region, Ghana",
+    "companyAddress": "123 Logistics Way, London, UK",
+    "companyCity": "London",
+    "companyCountry": "United Kingdom",
+    "businessHours": "Mon - Fri, 08:00 - 18:00",
+    "timezone": "UTC",
+    "currency": "GBP",
+    "heroHeadline": "Expert Shipping Services You Can Trust",
+    "heroSubtitle": "From the UK and China to Ghana by Air, Sea & Air.",
+    "footerText": "Reliable international shipping and freight forwarding from the UK and China to Ghana.",
+    "aboutText": "OBREMS GLOBAL LOGISTICS is a leading international shipping and freight forwarding company.",
+    "homepageHero": {
+      "headline": "Expert Shipping Services You Can Trust",
+      "subtitle": "RELIABLE. FAST. GLOBAL.",
+      "description": "UK → Ghana, Ghana → UK and China → Ghana freight solutions with secure tracking and customs support.",
+      "buttonText": "Track Shipment",
+      "buttonLink": "/tracking",
+      "secondaryButtonText": "Get a Quote",
+      "secondaryButtonLink": "/quote",
+      "imageUrl": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80",
+      "secondaryImageUrl": "https://images.pexels.com/photos/358319/pexels-photo-358319.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "trustText": "Trusted by businesses and families across Ghana and the UK.",
+      "stats": [
+        {
+          "value": "500+",
+          "label": "Shipments Delivered",
+          "icon": "Package",
+          "active": true,
+          "order": 1
+        },
+        {
+          "value": "20+",
+          "label": "Countries Served",
+          "icon": "Globe",
+          "active": true,
+          "order": 2
+        },
+        {
+          "value": "10+",
+          "label": "Years Experience",
+          "icon": "Users",
+          "active": true,
+          "order": 3
+        },
+        {
+          "value": "98%",
+          "label": "Customer Satisfaction",
+          "icon": "ShieldCheck",
+          "active": true,
+          "order": 4
+        }
+      ]
+    },
+    "about": {
+      "title": "Delivering Excellence Across Oceans & Skies",
+      "intro": "OBREMS GLOBAL LOGISTICS provides reliable shipping solutions from the UK and China to Ghana.",
+      "description": "We manage every aspect of the supply chain from warehouse consolidation to customs documentation and door-to-door services across Ghana.",
+      "mission": "To deliver dependable, transparent global logistics services for businesses and individuals.",
+      "vision": "To become the most reliable freight forwarding brand in West Africa.",
+      "story": "Founded to simplify international logistics between the UK, China and Ghana.",
+      "ctaText": "Ready to ship with OBREMS?",
+      "buttonText": "Get a Quote",
+      "imageUrl": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80"
+    },
+    "servicesPage": {
+      "title": "Expert Shipping Solutions",
+      "description": "Air freight, sea cargo, customs clearance and door-to-door delivery for UK and China to Ghana routes.",
+      "ctaText": "Get Quote"
+    },
+    "contact": {
+      "title": "Get in Touch With Our Team",
+      "description": "Questions about freight and customs support? We are ready to help.",
+      "email": "info@obremsgloballogistics.com",
+      "phone": "+44 7460 554358",
+      "whatsapp": "+44 7460 554358",
+      "address": "London, UK",
+      "businessHours": "Mon - Fri, 08:00 - 18:00",
+      "mapUrl": "",
+      "formTitle": "Send Us a Message",
+      "ctaText": "Send Message"
+    },
+    "footer": {
+      "description": "Reliable international shipping and freight forwarding from the UK and China to Ghana.",
+      "copyright": "© 2026 OBREMS GLOBAL LOGISTICS. All Rights Reserved.",
+      "ctaText": "Subscribe",
+      "navigation": [
+        {
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "label": "Services",
+          "url": "/services"
+        },
+        {
+          "label": "Tracking",
+          "url": "/tracking"
+        },
+        {
+          "label": "Quote",
+          "url": "/quote"
+        },
+        {
+          "label": "Contact",
+          "url": "/contact"
+        }
+      ]
+    },
+    "seo": {
+      "siteTitle": "OBREMS GLOBAL LOGISTICS",
+      "metaTitle": "OBREMS GLOBAL LOGISTICS | UK & China to Ghana Shipping",
+      "metaDescription": "Reliable international shipping and freight forwarding from the UK and China to Ghana.",
+      "keywords": [
+        "freight",
+        "shipping",
+        "ghana",
+        "logistics",
+        "air freight",
+        "sea freight"
+      ],
+      "ogTitle": "OBREMS GLOBAL LOGISTICS",
+      "ogDescription": "Trusted international shipping solutions for UK, China and Ghana.",
+      "ogImage": "",
+      "twitterImage": "",
+      "canonicalUrl": "https://www.obremsglobal.com",
+      "robots": "index,follow"
+    },
+    "announcement": {
+      "enabled": false,
+      "text": "Now shipping from the UK to Ghana.",
+      "buttonText": "Learn More",
+      "buttonUrl": "/services",
+      "startsAt": null,
+      "endsAt": null
+    },
+    "isUnderMaintenance": false,
+    "maintenanceMessage": "",
+    "enabledModules": [
+      "home",
+      "about",
+      "services",
+      "tracking",
+      "blog",
+      "faq",
+      "contact"
+    ],
+    "footerCollapsible": false,
+    "currencyRates": {
+      "GBP_GHS": 15.2,
+      "GBP_CNY": 9.1,
+      "GBP_USD": 1.27,
+      "GHS_CNY": 0.6,
+      "GHS_USD": 0.084,
+      "CNY_GHS": 1.67,
+      "CNY_GBP": 0.11,
+      "USD_GHS": 11.9,
+      "USD_GBP": 0.79,
+      "lastUpdated": "2026-09-12T01:00:31.565Z"
+    },
+    "paymentSettings": {
+      "bankName": "Barclays Bank UK",
+      "accountName": "OBREMS GLOBAL LOGISTICS LTD",
+      "accountNumber": "20491823",
+      "sortCode": "20-04-15",
+      "iban": "GB29BARC20041520491823",
+      "swiftBic": "BARCGB22",
+      "mobileMoneyName": "OBREMS LOGISTICS GH",
+      "mobileMoneyNumber": "+233 24 555 9900 (MTN MoMo / Telecel Cash)",
+      "paymentInstructions": "Please use your Invoice Number (e.g., OGL-INV-2026-000001) as the payment reference to ensure prompt reconciliation."
+    },
+    "socialLinks": [
+      {
+        "platform": "Facebook",
+        "url": "https://facebook.com/obremsglobal",
+        "enabled": true
+      },
+      {
+        "platform": "Instagram",
+        "url": "https://instagram.com/obremsglobal",
+        "enabled": true
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://linkedin.com/company/obremsglobal",
+        "enabled": true
+      },
+      {
+        "platform": "X",
+        "url": "https://x.com/obremsglobal",
+        "enabled": true
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://youtube.com/obremsglobal",
+        "enabled": true
+      },
+      {
+        "platform": "TikTok",
+        "url": "https://tiktok.com/@obremsglobal",
+        "enabled": true
+      }
+    ],
+    "facebookUrl": "https://facebook.com/obremsglobal",
+    "instagramUrl": "https://instagram.com/obremsglobal",
+    "linkedinUrl": "https://linkedin.com/company/obremsglobal",
+    "twitterUrl": "https://x.com/obremsglobal",
+    "youtubeUrl": "https://youtube.com/obremsglobal",
+    "tiktokUrl": "https://tiktok.com/@obremsglobal",
+    "snapchatUrl": "https://snapchat.com/add/obremsglobal",
+    "contactEmail": "info@obremsgloballogistics.com",
+    "createdAt": "2026-08-20T01:31:52.382Z",
+    "updatedAt": "2026-09-12T01:00:31.642Z",
+    "heroImageUrl": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80",
+    "heroImageUrl2": "https://images.pexels.com/photos/358319/pexels-photo-358319.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "heroImageUrl3": "https://images.pexels.com/photos/1554646/pexels-photo-1554646.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "heroImageUrl4": "https://images.pexels.com/photos/4391470/pexels-photo-4391470.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "ctaBannerImageUrl": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80",
+    "contactHeroImageUrl": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80",
+    "contactAccraOfficeImageUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80",
+    "contactKumasiOfficeImageUrl": "https://images.unsplash.com/photo-1578315853201-44cd7ed7e025?auto=format&fit=crop&w=800&q=80",
+    "aboutHeroImageUrl": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80",
+    "missionImageUrl": "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80",
+    "visionImageUrl": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
+    "aboutCtaImageUrl": "https://images.pexels.com/photos/4391470/pexels-photo-4391470.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "quoteHeroImageUrl": "https://images.pexels.com/photos/1554646/pexels-photo-1554646.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "trackHeroImageUrl": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
+    "bankName": "Barclays Bank UK",
+    "accountName": "OBREMS GLOBAL LOGISTICS LTD",
+    "accountNumber": "20491823",
+    "sortCode": "20-04-15",
+    "iban": "GB29BARC20041520491823",
+    "swiftBic": "BARCGB22",
+    "mobileMoneyName": "OBREMS LOGISTICS GH",
+    "mobileMoneyNumber": "+233 24 555 9900 (MTN MoMo / Telecel Cash)",
+    "paymentInstructions": "Please use your Invoice Number (e.g., OGL-INV-2026-000001) as the payment reference to ensure prompt reconciliation.",
+    "companyRegistrationNumber": "OGL-REG-847291",
+    "companyWebsite": "https://www.obremsglobal.com",
+    "companyBillingEmail": "billing@obremsgloballogistics.com",
+    "homepageHeroHeadline": "Expert Shipping Services You Can Trust",
+    "homepageHeroSubtitle": "RELIABLE. FAST. GLOBAL.",
+    "homepageHeroDescription": "UK → Ghana, Ghana → UK and China → Ghana freight solutions with secure tracking and customs support.",
+    "homepageHeroButtonText": "Track Shipment",
+    "homepageHeroSecondaryButtonText": "Get a Quote",
+    "homepageHeroTrustText": "Trusted by businesses and families across Ghana and the UK.",
+    "aboutTitle": "Delivering Excellence Across Oceans & Skies",
+    "aboutIntro": "OBREMS GLOBAL LOGISTICS provides reliable shipping solutions from the UK and China to Ghana.",
+    "aboutMission": "To deliver dependable, transparent global logistics services for businesses and individuals.",
+    "aboutVision": "To become the most reliable freight forwarding brand in West Africa.",
+    "servicesTitle": "Expert Shipping Solutions",
+    "servicesDescription": "Air freight, sea cargo, customs clearance and door-to-door delivery for UK and China to Ghana routes.",
+    "contactTitle": "Get in Touch With Our Team",
+    "contactDescription": "Questions about freight and customs support? We are ready to help.",
+    "footerDescription": "Reliable international shipping and freight forwarding from the UK and China to Ghana.",
+    "footerCopyright": "© 2026 OBREMS GLOBAL LOGISTICS. All Rights Reserved.",
+    "GBP_GHS": 15.2,
+    "GBP_CNY": 9.1,
+    "GBP_USD": 1.27,
+    "GHS_CNY": 0.6,
+    "GHS_USD": 0.084,
+    "CNY_GHS": 1.67,
+    "CNY_GBP": 0.11,
+    "USD_GHS": 11.9,
+    "USD_GBP": 0.79,
+    "officeLocations": [],
+    "contactMethods": [],
+    "advertBanner": {
+      "enabled": false,
+      "title": "",
+      "text": "",
+      "imageUrl": "",
+      "buttonText": "",
+      "buttonUrl": ""
+    },
+    "shippingRates": {
+      "GBP": {
+        "perKg": 7,
+        "perCbm": 200
+      },
+      "GHS": {
+        "perKg": 20,
+        "perCbm": 70
+      },
+      "CNY": {
+        "perKg": 10,
+        "perCbm": 999
+      },
+      "USD": {
+        "perKg": 33,
+        "perCbm": 444
+      },
+      "EUR": {
+        "perKg": 23,
+        "perCbm": 334
+      }
+    },
+    "shippingPreferences": {
+      "currency": "GBP",
+      "weightUnit": "kg",
+      "dimensionUnit": "cm"
+    },
+    "contentVersion": "2026-09-12T01:00:31.640Z"
+  }
+]

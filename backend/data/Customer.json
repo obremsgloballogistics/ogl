@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "mt0w1h1cy9evno",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "phone": "+233 24 123 4567",
+    "company": "",
+    "address": "Accra, Ghana",
+    "country": "",
+    "shipments": [],
+    "createdAt": "2026-08-20T02:15:14.303Z",
+    "updatedAt": "2026-08-20T02:15:14.303Z"
+  }
+]

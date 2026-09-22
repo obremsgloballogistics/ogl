@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "mttmj2q2du6r82",
+    "shipment": "mttk5qcrwfe69g",
+    "status": "Received",
+    "location": "Mobile Scanner Test",
+    "description": "Scanner integration validation",
+    "updatedBy": "mt0uhpk8dikslz",
+    "eventDate": "2026-09-09T04:54:18.506Z",
+    "createdAt": "2026-09-09T04:54:18.506Z",
+    "updatedAt": "2026-09-09T04:54:18.506Z"
+  }
+]

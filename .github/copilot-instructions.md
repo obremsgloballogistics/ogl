@@ -1,0 +1,6 @@
+- Scaffold and implement a full-stack MERN logistics platform.
+- Keep frontend and backend separate.
+- Use React, Vite, Tailwind CSS, React Router, Lucide React, Axios, React Hook Form, Recharts.
+- Use Node.js, Express, MongoDB, Mongoose, JWT, bcrypt.
+- Create backend API with authentication, role-based authorization, CMS content, shipments, quotes, customers, and settings.
+- Do not hardcode contact or website content values; load from CMS settings.
