@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const runtimeEnv = (import.meta as ImportMeta & {
+  env?: { PROD?: boolean; VITE_API_BASE_URL?: string; VITE_API_URL?: string };
+}).env;
+const configuredApiBaseUrl = runtimeEnv?.VITE_API_BASE_URL || runtimeEnv?.VITE_API_URL;
+const defaultApiBaseUrl = runtimeEnv?.PROD ? 'https://ogl-backend.onrender.com/api' : '/api';
+
 const api = axios.create({
-  baseURL: (import.meta as ImportMeta & { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || '/api',
+  baseURL: configuredApiBaseUrl || defaultApiBaseUrl,
   headers: {
 
     'Content-Type': 'application/json',
