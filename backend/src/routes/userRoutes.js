@@ -111,6 +111,9 @@ router.patch('/:id', protect, requireUserManagement, async (req, res) => {
     const update = {};
     if (role) {
       if (!VALID_ROLES.includes(role)) return res.status(400).json({ success: false, message: 'Invalid role assignment.' });
+      if (role === 'Super Admin' && req.user.role !== 'Super Admin') {
+        return res.status(403).json({ success: false, message: 'Only a Super Admin can assign the Super Admin role.' });
+      }
       update.role = role;
     }
     if (status) update.status = status;

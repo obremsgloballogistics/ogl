@@ -47,10 +47,14 @@ async function seed() {
     { name: 'Ghana Local Delivery', origin: 'Ghana', destination: 'Ghana', shippingMethod: 'Local Delivery', currency: 'GHS', measurementType: 'Weight', weightUnit: 'KG', volumeUnit: 'CBM', pricingMethod: 'Per KG', rate: 20, isActive: true },
   ]);
 
-  const adminPassword = await bcrypt.hash('Admin123!', 10);
+  const adminEmail = String(process.env.ADMIN_EMAIL || 'admin@obrems.com').trim().toLowerCase();
+  if (!process.env.ADMIN_PASSWORD) {
+    throw new Error('ADMIN_PASSWORD is required to seed the administrator');
+  }
+  const adminPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
   const superAdmin = await User.create({
     name: 'John Mensah',
-    email: 'admin@obrems.com',
+    email: adminEmail,
     password: adminPassword,
     role: 'Super Admin',
   });

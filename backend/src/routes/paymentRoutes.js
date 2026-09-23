@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const router = express.Router();
 const { models } = require('../utils/db');
 const Invoice = require('../models/Invoice');
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 const { paymentNotificationLimiter } = require('../middleware/rateLimiters');
 
 function paymentCurrency(req) {
@@ -41,7 +41,7 @@ function exchangeRate(invoiceCurrency, paymentCurrency, settings) {
   throw new Error(`No configured conversion rate from ${invoiceCurrency} to ${paymentCurrency}.`);
 }
 
-router.post('/paystack/initialize', protect, async (req, res) => {
+router.post('/paystack/initialize', protect, authorize(['Super Admin', 'Admin', 'Finance Officer']), async (req, res) => {
   try {
     const invoice = await Invoice.findById(req.body.invoiceId);
     if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found.' });
@@ -60,7 +60,7 @@ router.post('/paystack/initialize', protect, async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-router.get('/paystack/verify/:reference', protect, async (req, res) => {
+router.get('/paystack/verify/:reference', protect, authorize(['Super Admin', 'Admin', 'Finance Officer']), async (req, res) => {
   if (!process.env.PAYSTACK_SECRET_KEY) return res.status(503).json({ success: false, message: 'Paystack is not configured.' });
   try {
     const response = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(req.params.reference)}`, { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } });

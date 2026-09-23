@@ -99,11 +99,21 @@ async function startServer() {
   const settings = await models.SiteSettings.findOne();
   if (!settings) await models.SiteSettings.create({});
 
-  const admin = await models.User.findOne({ email: 'admin@obrems.com' });
+  const adminEmail = String(process.env.ADMIN_EMAIL || 'admin@obrems.com').trim().toLowerCase();
+  const admin = await models.User.findOne({ email: adminEmail });
   if (!admin) {
-    const bcrypt = require('bcrypt');
-    const hashed = await bcrypt.hash('Admin123!', 10);
-    await models.User.create({ name: 'John Mensah', email: 'admin@obrems.com', password: hashed, role: 'Super Admin', active: true, status: 'Active' });
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('ADMIN_PASSWORD is required to bootstrap the first administrator');
+      }
+      console.warn(`Admin account ${adminEmail} was not created because ADMIN_PASSWORD is not configured.`);
+    } else {
+      const bcrypt = require('bcrypt');
+      const hashed = await bcrypt.hash(adminPassword, 12);
+      await models.User.create({ name: 'John Mensah', email: adminEmail, password: hashed, role: 'Super Admin', active: true, status: 'Active' });
+      console.log(`Bootstrap administrator created: ${adminEmail}`);
+    }
   }
   app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
 }
