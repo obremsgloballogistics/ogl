@@ -147,17 +147,17 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl py-8">
             {/* Top Subtitle Tag */}
-            <span className="inline-block text-xs font-bold uppercase tracking-[0.3em] text-slate-300 mb-8">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.3em] text-slate-300 mb-8 fade-up fade-up-delay-100">
               {settings.homepageHero?.subtitle || settings.heroSubtitle}
             </span>
 
             {/* Main Headline formatted on 2 clean lines */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white mb-8">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white mb-8 fade-up fade-up-delay-200">
               {settings.homepageHero?.headline || settings.heroHeadline}
             </h1>
 
             {/* Supporting Text */}
-            <p className="text-lg sm:text-xl text-slate-200 font-normal leading-relaxed mb-12 max-w-2xl">
+            <p className="text-lg sm:text-xl text-slate-200 font-normal leading-relaxed mb-12 max-w-2xl fade-up fade-up-delay-300">
               {settings.homepageHero?.description || settings.heroSubtitle}
             </p>
 
@@ -165,14 +165,14 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-6 mb-14">
               <Link
                 to="/tracking"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-slate-100 text-slate-950 text-sm font-semibold hover:bg-white transition-colors shadow-md"
+                            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-slate-100 text-slate-950 text-sm font-semibold hover:bg-white transition-colors shadow-md fade-up fade-up-delay-400"
               >
                 <Package className="w-4 h-4 text-[#0B63CE]" />
                 <span>Track Shipment</span>
               </Link>
               <Link
                 to="/quote"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg border border-white/30 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors backdrop-blur-sm"
+                            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg border border-white/30 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors backdrop-blur-sm fade-up fade-up-delay-500"
               >
                 <FileText className="w-4 h-4" />
                 <span>Get a Quote</span>
@@ -296,8 +296,8 @@ export default function HomePage() {
       </section>
 
       {/* ABOUT OBREMS GLOBAL LOGISTICS SECTION - FULL IMAGE OVERLAY BANNER */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[480px] flex items-center p-8 sm:p-14">
+      <section className="w-full py-16">
+        <div className="relative w-full overflow-hidden shadow-2xl min-h-[480px] flex items-center p-8 sm:p-14">
           {/* Background Image */}
           <img
             src={localImages.tracking}
@@ -310,18 +310,18 @@ export default function HomePage() {
           {/* Content Overlayed directly on Image */}
           <div className="relative z-10 max-w-2xl space-y-6 text-white">
             <div>
-              <span className="text-xs font-bold text-sky-400 uppercase tracking-[0.25em] mb-2 block">
+                        <span className="text-xs font-bold text-sky-400 uppercase tracking-[0.25em] mb-2 block fade-up fade-up-delay-200">
                 ABOUT OBREMS GLOBAL LOGISTICS
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight fade-up fade-up-delay-300">
                 Your Trusted Logistics Partner
               </h2>
             </div>
 
-            <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
+                      <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-normal fade-up fade-up-delay-400">
               OBREMS GLOBAL LOGISTICS is a leading international shipping and freight forwarding company. We provide reliable, efficient and cost-effective shipping solutions from the UK and China to Ghana.
             </p>
-            <p className="text-slate-200 text-sm leading-relaxed font-normal">
+                      <p className="text-slate-200 text-sm leading-relaxed font-normal fade-up fade-up-delay-450">
               We are committed to speed, safety and customer satisfaction every step of the way.
             </p>
 
@@ -332,8 +332,8 @@ export default function HomePage() {
                 'Secure handling of your goods',
                 'Competitive rates',
                 'Dedicated customer support',
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3">
+                        ].map((item, idx) => (
+                          <div key={item} className={`flex items-center gap-3 fade-in fade-in-delay-${150 + idx * 100}`}>
                   <CheckCircle2 className="w-5 h-5 text-sky-400 shrink-0" />
                   <span className="text-sm font-medium text-slate-100">{item}</span>
                 </div>

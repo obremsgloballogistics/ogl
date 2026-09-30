@@ -105,13 +105,17 @@ export default function AdminServicesPage() {
   };
 
   const toggleStatus = (id: string) => {
-    setServices(
-      services.map((s) =>
-        s.id === id ? { ...s, status: s.status === 'Active' ? 'Inactive' : 'Active' } : s
-      )
-    );
-    triggerToast('Service status toggled.');
+    const service = services.find((s) => s.id === id);
+    if (!service) return;
+    const newStatus = service.status === 'Active' ? 'Inactive' : 'Active';
+    api.put(`/services/${id}`, { active: newStatus === 'Active' })
+      .then(() => {
+        setServices(services.map((s) => s.id === id ? { ...s, status: newStatus } : s));
+        triggerToast(`Service is now ${newStatus}.`);
+      })
+      .catch(() => triggerToast('Failed to update service status.'));
   };
+
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

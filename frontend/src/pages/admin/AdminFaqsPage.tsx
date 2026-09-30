@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { HelpCircle, Plus, Trash2, CheckCircle2, X } from 'lucide-react';
+import { HelpCircle, Plus, Trash2, CheckCircle2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../services/api';
 
 interface FAQ {
@@ -14,6 +14,9 @@ export default function AdminFaqsPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Form State
   const [question, setQuestion] = useState('');
@@ -45,6 +48,9 @@ export default function AdminFaqsPage() {
   const handleDelete = (id: string) => {
     api.delete(`/faqs/${id}`).then(() => { setFaqs((current) => current.filter((faq) => faq.id !== id)); triggerToast('FAQ deleted.'); }).catch(() => triggerToast('Failed to delete FAQ.'));
   };
+
+  const totalPages = Math.max(1, Math.ceil(faqs.length / PAGE_SIZE));
+  const paginatedFaqs = faqs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -79,29 +85,69 @@ export default function AdminFaqsPage() {
 
       {/* FAQs Accordion/Card View */}
       <div className="space-y-4">
-        {faqs.map((faq) => (
-          <div
-            key={faq.id}
-            className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-start justify-between gap-4"
-          >
-            <div className="space-y-2 flex-1">
-              <span className="px-2.5 py-0.5 rounded-md bg-[#063B66]/10 text-[#063B66] text-[10px] font-bold uppercase">
-                {faq.category}
-              </span>
-              <h3 className="text-sm font-bold text-slate-900">{faq.question}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{faq.answer}</p>
-            </div>
-
-            <button
-              onClick={() => handleDelete(faq.id)}
-              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors self-end md:self-start"
-              title="Delete FAQ"
+        {paginatedFaqs.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
+            <p className="text-slate-400 font-semibold">No FAQs found.</p>
+          </div>
+        ) : (
+          paginatedFaqs.map((faq) => (
+            <div
+              key={faq.id}
+              className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-start justify-between gap-4"
             >
-              <Trash2 className="w-4 h-4" />
+              <div className="space-y-2 flex-1">
+                <span className="px-2.5 py-0.5 rounded-md bg-[#063B66]/10 text-[#063B66] text-[10px] font-bold uppercase">
+                  {faq.category}
+                </span>
+                <h3 className="text-sm font-bold text-slate-900">{faq.question}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{faq.answer}</p>
+              </div>
+
+              <button
+                onClick={() => handleDelete(faq.id)}
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors self-end md:self-start"
+                title="Delete FAQ"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Pagination */}
+      {faqs.length > 0 && (
+        <div className="bg-white px-4 py-3 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-slate-500 shadow-sm">
+          <span>Showing <strong className="text-slate-700">{paginatedFaqs.length}</strong> of <strong className="text-slate-700">{faqs.length}</strong> FAQs</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                  page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {/* CREATE MODAL */}
       {showModal && (

@@ -9,7 +9,9 @@ import {
   X,
   Clock,
   User,
-  Phone
+  Phone,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import api from '../../services/api';
 
@@ -31,6 +33,9 @@ export default function AdminMessagesPage() {
   const [activeMessage, setActiveMessage] = useState<ContactMessage | null>(null);
   const [replyText, setReplyText] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   useEffect(() => {
     api.get('/messages').then((response) => {
@@ -49,6 +54,11 @@ export default function AdminMessagesPage() {
       m.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       m.senderEmail.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const totalPages = Math.max(1, Math.ceil(filteredMessages.length / PAGE_SIZE));
+  const paginated = filteredMessages.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSearch = (val: string) => { setSearchTerm(val); setCurrentPage(1); };
 
   const handleSendReply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +109,7 @@ export default function AdminMessagesPage() {
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search sender name, email or subject..."
             className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] focus:bg-white transition-colors"
           />
@@ -108,8 +118,13 @@ export default function AdminMessagesPage() {
 
       {/* Messages List */}
       <div className="space-y-4">
-        {filteredMessages.map((msg) => (
-          <div
+        {paginated.length === 0 ? (
+          <div className="p-16 text-center text-slate-400 font-semibold bg-white rounded-xl border border-slate-200 shadow-2xs">
+            No messages found.
+          </div>
+        ) : (
+          paginated.map((msg) => (
+            <div
             key={msg.id}
             className={`p-6 rounded-xl border transition-all ${
               msg.status === 'Unread'
@@ -165,6 +180,38 @@ export default function AdminMessagesPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="bg-white px-4 py-3 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-slate-500 shadow-sm">
+        <span>Showing <strong className="text-slate-700">{paginated.length}</strong> of <strong className="text-slate-700">{filteredMessages.length}</strong> messages</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* REPLY MODAL */}

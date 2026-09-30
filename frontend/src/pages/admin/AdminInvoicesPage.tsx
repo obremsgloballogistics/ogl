@@ -30,6 +30,8 @@ import {
   ShieldCheck,
   ChevronDown,
   RefreshCw,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import api from '../../services/api';
 
@@ -202,6 +204,9 @@ export default function AdminInvoicesPage() {
   const [formDiscount, setFormDiscount] = useState<number>(0);
   const [formNotes, setFormNotes] = useState('Thank you for choosing OBREMS GLOBAL LOGISTICS. Please use your invoice number as the payment reference.');
   const [formAutoSendEmail, setFormAutoSendEmail] = useState<boolean>(true);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -705,6 +710,12 @@ export default function AdminInvoicesPage() {
     return matchesSearch && matchesStatus;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / PAGE_SIZE));
+  const paginatedInvoices = filteredInvoices.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSearch = (val: string) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleTabChange = (val: string) => { setStatusFilter(val); setCurrentPage(1); };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-[1320px] mx-auto">
       {/* Toast Notification */}
@@ -806,7 +817,7 @@ export default function AdminInvoicesPage() {
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search by Invoice #, customer name, email, tracking #..."
             className="w-full pl-9 pr-4 py-2 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] focus:bg-white transition-colors"
           />
@@ -816,7 +827,7 @@ export default function AdminInvoicesPage() {
           {['All', 'Paid', 'Pending', 'Sent', 'Partially Paid', 'Overdue', 'Draft', 'Cancelled'].map((tab) => (
             <button
               key={tab}
-              onClick={() => setStatusFilter(tab)}
+              onClick={() => handleTabChange(tab)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
                 statusFilter === tab
                   ? 'bg-[#063B66] text-white font-bold'
@@ -851,14 +862,14 @@ export default function AdminInvoicesPage() {
                     Loading invoices from database...
                   </td>
                 </tr>
-              ) : filteredInvoices.length === 0 ? (
+              ) : paginatedInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     No matching invoices found. Click "Create New Invoice" to generate one.
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((inv) => (
+                paginatedInvoices.map((inv) => (
                   <tr key={inv._id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-6 py-4 font-mono font-bold text-[#063B66]">
                       <button

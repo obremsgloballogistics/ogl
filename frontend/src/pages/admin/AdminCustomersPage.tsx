@@ -25,6 +25,7 @@ export default function AdminCustomersPage() {
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [showCreate, setShowCreate] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [viewCustomer, setViewCustomer] = useState<any | null>(null);
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPhone, setFormPhone] = useState('');
@@ -32,6 +33,8 @@ export default function AdminCustomersPage() {
   const [formAddress, setFormAddress] = useState('');
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const showToast = (text: string) => {
     setToast(text);
@@ -118,6 +121,38 @@ export default function AdminCustomersPage() {
     c.address?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setCurrentPage(1);
+  };
+
+  const handleExport = () => {
+    const headers = ['Name', 'Email', 'Phone', 'WhatsApp', 'Address', 'Shipments', 'Total Spent', 'Status', 'Joined'];
+    const rows = filtered.map((c) => [
+      c.name || '',
+      c.email || '',
+      c.phone || '',
+      c.whatsapp || '',
+      c.address || '',
+      c.totalShipments || 0,
+      c.totalSpent || '',
+      c.status || 'Active',
+      c.joinDate || '',
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customers_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Customers exported to CSV!');
+  };
+
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
       {toast && (
@@ -137,7 +172,7 @@ export default function AdminCustomersPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
+          <button onClick={handleExport} className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
             <Download className="w-4 h-4" />
             Export
           </button>
@@ -179,7 +214,7 @@ export default function AdminCustomersPage() {
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search by name, email or location..."
               className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] focus:bg-white transition-colors"
             />
@@ -224,7 +259,7 @@ export default function AdminCustomersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {filtered.map((c) => (
+                {paginated.map((c) => (
                   <tr key={c._id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
@@ -271,7 +306,7 @@ export default function AdminCustomersPage() {
                     <td className="py-3 px-4 text-slate-400 text-[11px]">{c.joinDate || '-'}</td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button className="p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors" title="View Details">
+                        <button onClick={() => setViewCustomer(c)} className="p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors" title="View Details">
                           <Eye className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleEdit(c)} className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit Customer">
@@ -288,13 +323,31 @@ export default function AdminCustomersPage() {
             </table>
           </div>
           <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>Showing <strong className="text-slate-700">{filtered.length}</strong> of <strong className="text-slate-700">{customers.length}</strong> customers</span>
+            <span>Showing <strong className="text-slate-700">{paginated.length}</strong> of <strong className="text-slate-700">{filtered.length}</strong> customers</span>
             <div className="flex items-center gap-1.5">
-              <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-3 py-1 rounded-lg bg-[#063B66] text-white font-bold">1</span>
-              <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                    page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -348,6 +401,58 @@ export default function AdminCustomersPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* View Customer Modal */}
+      {viewCustomer && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="text-sm font-extrabold text-[#063B66] uppercase tracking-wider">Customer Details</h3>
+              <button onClick={() => setViewCustomer(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-[#063B66] text-white flex items-center justify-center font-extrabold text-xl shrink-0">
+                  {viewCustomer.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                </div>
+                <div>
+                  <p className="font-extrabold text-[#063B66] text-lg">{viewCustomer.name}</p>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-slate-200 ${
+                    viewCustomer.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-600'
+                  }`}>{viewCustomer.status || 'Active'}</span>
+                </div>
+              </div>
+              <div className="space-y-2.5 text-xs">
+                {[
+                  { icon: Mail, label: 'Email', value: viewCustomer.email },
+                  { icon: Phone, label: 'Phone', value: viewCustomer.phone || '—' },
+                  { icon: Phone, label: 'WhatsApp', value: viewCustomer.whatsapp || '—' },
+                  { icon: MapPin, label: 'Address', value: viewCustomer.address || '—' },
+                  { icon: Package, label: 'Total Shipments', value: viewCustomer.totalShipments || 0 },
+                ].map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-center justify-between py-2 border-b border-slate-100">
+                    <span className="flex items-center gap-2 text-slate-500 font-semibold">
+                      <Icon className="w-3.5 h-3.5 text-[#0B63CE]" />{label}
+                    </span>
+                    <span className="font-bold text-slate-800">{value}</span>
+                  </div>
+                ))}
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-slate-500 font-semibold">Total Spent</span>
+                  <span className="font-extrabold text-[#063B66] text-sm">{viewCustomer.totalSpent || '—'}</span>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button onClick={() => { setViewCustomer(null); handleEdit(viewCustomer); }} className="flex items-center gap-2 px-4 py-2 bg-[#0B63CE] hover:bg-[#0952AD] text-white rounded-lg text-xs font-bold transition-colors">
+                  <Save className="w-3.5 h-3.5" /> Edit Customer
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

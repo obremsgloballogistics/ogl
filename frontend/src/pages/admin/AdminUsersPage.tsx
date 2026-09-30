@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   UserCheck, Plus, Trash2, CheckCircle2, X, AlertCircle,
   Copy, Check, Eye, EyeOff, Shield, ChevronDown, RefreshCw, Pencil,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import api from '../../services/api';
 
@@ -75,6 +76,9 @@ export default function AdminUsersPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<StaffUser | null>(null);
   const [accessUser, setAccessUser] = useState<StaffUser | null>(null);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Form state
   const [name, setName] = useState('');
@@ -209,6 +213,9 @@ export default function AdminUsersPage() {
     } catch {}
   };
 
+  const totalPages = Math.max(1, Math.ceil(users.length / PAGE_SIZE));
+  const paginatedUsers = users.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Toast */}
@@ -301,7 +308,14 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {users.map((u) => (
+                {paginatedUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center text-slate-400 font-semibold">
+                      No users found.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedUsers.map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
@@ -365,6 +379,41 @@ export default function AdminUsersPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && !fetchError && (
+          <div className="bg-white px-4 py-3 border-t border-slate-200 rounded-b-xl flex items-center justify-between text-xs text-slate-500 shadow-sm">
+            <span>Showing <strong className="text-slate-700">{paginatedUsers.length}</strong> of <strong className="text-slate-700">{users.length}</strong> users</span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                    page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

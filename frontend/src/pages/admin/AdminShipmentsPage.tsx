@@ -66,6 +66,8 @@ export default function AdminShipmentsPage() {
   const [presets, setPresets] = useState<any[]>([]);
   const [selectedPresetId, setSelectedPresetId] = useState('');
   const [measurementType, setMeasurementType] = useState<'weight' | 'dimensions' | 'both'>('weight');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Preset-driven pricing state
   const [presetPricingMethod, setPresetPricingMethod] = useState('');
@@ -288,6 +290,41 @@ export default function AdminShipmentsPage() {
     return matchSearch && matchTab;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1); };
+  const handleTabChange = (val: string) => { setActiveTab(val); setCurrentPage(1); };
+
+  const handleExport = () => {
+    const headers = ['Tracking Number', 'Customer', 'Route', 'Method', 'Weight', 'Amount Due', 'Status', 'Last Update'];
+    const rows = filtered.map((s) => {
+      const customerId = typeof s.customer === 'string' ? s.customer : s.customer?._id;
+      const matchedCustomer = customers.find((customer) => customer._id === customerId);
+      const custName = typeof s.customer === 'string'
+        ? matchedCustomer?.name || s.customer
+        : s.customer?.name || matchedCustomer?.name || 'Unknown';
+      return [
+        s.trackingNumber || '',
+        custName || '',
+        s.route || `${s.origin} → ${s.destination}`,
+        s.method || 'Air Freight',
+        s.weight || '',
+        Number(s.amountDue) > 0 ? Number(s.amountDue).toFixed(2) : '',
+        s.status || '',
+        s.updated || (s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '')
+      ];
+    });
+    const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `shipments_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const stats = [
     { label: 'Total', value: shipments.length, icon: Package, color: 'text-slate-600 bg-white border border-slate-200' },
     { label: 'In Transit', value: shipments.filter(s => s.status === 'In Transit').length, icon: Truck, color: 'text-slate-600 bg-white border border-slate-200' },
@@ -309,7 +346,7 @@ export default function AdminShipmentsPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
+          <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
             <Download className="w-4 h-4" />
             Export CSV
           </button>
@@ -349,7 +386,7 @@ export default function AdminShipmentsPage() {
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search by tracking number, customer or route..."
               className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] focus:bg-white transition-colors"
             />
@@ -365,7 +402,7 @@ export default function AdminShipmentsPage() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${
                 activeTab === tab
                   ? 'bg-[#063B66] text-white'
@@ -399,14 +436,14 @@ export default function AdminShipmentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
-              {filtered.length === 0 ? (
+              {paginated.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-16 text-center text-slate-400 font-semibold">
                     No shipments found.
                   </td>
                 </tr>
               ) : (
-                filtered.map((s) => {
+                paginated.map((s) => {
                   const customerId = typeof s.customer === 'string' ? s.customer : s.customer?._id;
                   const matchedCustomer = customers.find((customer) => customer._id === customerId);
                   const custName = typeof s.customer === 'string'
@@ -484,13 +521,31 @@ export default function AdminShipmentsPage() {
 
         {/* Pagination */}
         <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <span>Showing <strong className="text-slate-700">{filtered.length}</strong> of <strong className="text-slate-700">{shipments.length}</strong> shipments</span>
+          <span>Showing <strong className="text-slate-700">{paginated.length}</strong> of <strong className="text-slate-700">{filtered.length}</strong> shipments</span>
           <div className="flex items-center gap-1.5">
-            <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-3 py-1 rounded-lg bg-[#063B66] text-white font-bold">1</span>
-            <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                  page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

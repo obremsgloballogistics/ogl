@@ -8,10 +8,11 @@ import {
   Trash2,
   CheckCircle2,
   X,
-  FileText,
   Upload,
   Calendar,
-  Lock
+  Lock,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface DocItem {
@@ -74,6 +75,9 @@ export default function AdminDocumentsPage() {
   const [showModal, setShowModal] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
+
   // Form
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<'Air Waybill' | 'Bill of Lading' | 'Customs Form' | 'Packing List'>('Air Waybill');
@@ -92,6 +96,12 @@ export default function AdminDocumentsPage() {
     const matchesCat = categoryFilter === 'All' || d.category === categoryFilter;
     return matchesSearch && matchesCat;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredDocs.length / PAGE_SIZE));
+  const paginatedDocs = filteredDocs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSearch = (val: string) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleTabChange = (val: string) => { setCategoryFilter(val); setCurrentPage(1); };
 
   const handleUpload = (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,14 +207,14 @@ export default function AdminDocumentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredDocs.length === 0 ? (
+              {paginatedDocs.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     No documents found.
                   </td>
                 </tr>
               ) : (
-                filteredDocs.map((doc) => (
+                paginatedDocs.map((doc) => (
                   <tr key={doc.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-6 py-4 font-mono font-bold text-[#063B66]">{doc.docNumber}</td>
                     <td className="px-6 py-4">
@@ -250,6 +260,40 @@ export default function AdminDocumentsPage() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {filteredDocs.length > 0 && (
+        <div className="bg-white px-4 py-3 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-slate-500 shadow-sm">
+          <span>Showing <strong className="text-slate-700">{paginatedDocs.length}</strong> of <strong className="text-slate-700">{filteredDocs.length}</strong> documents</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                  page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* UPLOAD MODAL */}
       {showModal && (

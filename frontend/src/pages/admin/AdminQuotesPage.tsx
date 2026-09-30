@@ -15,7 +15,9 @@ import {
   X,
   Save,
   Plane,
-  Ship
+  Ship,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import api from '../../services/api';
 
@@ -40,6 +42,22 @@ export default function AdminQuotesPage() {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('All');
   const [selected, setSelected] = useState<any>(null);
+  const [showNewQuote, setShowNewQuote] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
+
+  // New quote form state
+  const [nqName, setNqName] = useState('');
+  const [nqEmail, setNqEmail] = useState('');
+  const [nqPhone, setNqPhone] = useState('');
+  const [nqRoute, setNqRoute] = useState('UK → Ghana (Air)');
+  const [nqMethod, setNqMethod] = useState('Air Freight');
+  const [nqWeight, setNqWeight] = useState('');
+  const [nqNotes, setNqNotes] = useState('');
+  const [nqSaving, setNqSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 3000); };
 
   useEffect(() => {
     api.get('/quotes')
@@ -53,8 +71,37 @@ export default function AdminQuotesPage() {
       const updated = response.data?.data || { ...selected, status };
       setQuotes((current) => current.map((quote) => quote._id === selected._id ? updated : quote));
       setSelected(updated);
+      showToast('Quote status updated!');
     } catch {
-      // Keep the selected record open so the user can retry.
+      showToast('Failed to update quote status.');
+    }
+  };
+
+  const handleCreateQuote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nqName || !nqEmail) return;
+    setNqSaving(true);
+    try {
+      const res = await api.post('/quotes', {
+        fullName: nqName,
+        email: nqEmail,
+        phone: nqPhone,
+        route: nqRoute,
+        method: nqMethod,
+        weight: nqWeight,
+        notes: nqNotes,
+        status: 'Pending',
+      });
+      if (res.data?.data) {
+        setQuotes((prev) => [res.data.data, ...prev]);
+        showToast('Quote request created!');
+      }
+      setShowNewQuote(false);
+      setNqName(''); setNqEmail(''); setNqPhone(''); setNqWeight(''); setNqNotes('');
+    } catch (err: any) {
+      showToast(err?.response?.data?.message || 'Failed to create quote.');
+    } finally {
+      setNqSaving(false);
     }
   };
 
@@ -67,6 +114,12 @@ export default function AdminQuotesPage() {
     return matchSearch && matchTab;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleTabChange = (tab: string) => { setActiveTab(tab); setCurrentPage(1); };
+  const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1); };
+
   const stats = [
     { label: 'Total Quotes', value: quotes.length, color: 'text-slate-600 bg-white border border-slate-200' },
     { label: 'Pending', value: quotes.filter(q => q.status === 'Pending').length, color: 'text-slate-600 bg-white border border-slate-200' },
@@ -76,6 +129,12 @@ export default function AdminQuotesPage() {
 
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-20 right-6 z-50 px-5 py-3.5 rounded-xl shadow-2xl border bg-[#063B66] text-white text-xs font-semibold animate-in slide-in-from-top-2">
+          {toast}
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -87,7 +146,7 @@ export default function AdminQuotesPage() {
             <Download className="w-4 h-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#0B63CE] hover:bg-[#0952AD] text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+          <button onClick={() => setShowNewQuote(true)} className="flex items-center gap-2 px-4 py-2 bg-[#0B63CE] hover:bg-[#0952AD] text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
             <Plus className="w-4 h-4" />
             New Quote
           </button>
@@ -117,7 +176,7 @@ export default function AdminQuotesPage() {
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search by quote ID, customer or route..."
               className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] focus:bg-white transition-colors"
             />
@@ -131,7 +190,7 @@ export default function AdminQuotesPage() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${
                 activeTab === tab ? 'bg-[#063B66] text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
@@ -162,12 +221,12 @@ export default function AdminQuotesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
-              {filtered.length === 0 ? (
+              {paginated.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-16 text-center text-slate-400 font-semibold">No quotes found.</td>
                 </tr>
               ) : (
-                filtered.map((q) => {
+                paginated.map((q) => {
                   const IconComp = STATUS_ICON[q.status];
                   return (
                     <tr key={q._id} className="hover:bg-slate-50 transition-colors">
@@ -207,7 +266,7 @@ export default function AdminQuotesPage() {
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
-                          <button className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
+                          <button onClick={() => setSelected(q)} className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -220,13 +279,31 @@ export default function AdminQuotesPage() {
           </table>
         </div>
         <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <span>Showing <strong className="text-slate-700">{filtered.length}</strong> of <strong className="text-slate-700">{quotes.length}</strong> quotes</span>
+          <span>Showing <strong className="text-slate-700">{paginated.length}</strong> of <strong className="text-slate-700">{filtered.length}</strong> quotes</span>
           <div className="flex items-center gap-1.5">
-            <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-3 py-1 rounded-lg bg-[#063B66] text-white font-bold">1</span>
-            <button className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg font-bold text-xs transition-colors ${
+                  page === currentPage ? 'bg-[#063B66] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -295,6 +372,68 @@ export default function AdminQuotesPage() {
                 </select>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Quote Modal */}
+      {showNewQuote && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="text-sm font-extrabold text-[#063B66] uppercase tracking-wider">New Quote Request</h3>
+              <button onClick={() => setShowNewQuote(false)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateQuote} className="p-6 grid grid-cols-2 gap-4">
+              {[
+                { label: 'Full Name', placeholder: 'Customer full name', span: 2, value: nqName, set: setNqName, required: true },
+                { label: 'Email Address', placeholder: 'customer@email.com', span: 1, value: nqEmail, set: setNqEmail, required: true },
+                { label: 'Phone', placeholder: '+233 24 000 0000', span: 1, value: nqPhone, set: setNqPhone, required: false },
+                { label: 'Weight', placeholder: 'e.g. 5 kg', span: 1, value: nqWeight, set: setNqWeight, required: false },
+              ].map((f) => (
+                <div key={f.label} className={`space-y-1.5 ${f.span === 2 ? 'col-span-2' : ''}`}>
+                  <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">{f.label}</label>
+                  <input
+                    type="text"
+                    required={f.required}
+                    value={f.value}
+                    onChange={(e) => f.set(e.target.value)}
+                    placeholder={f.placeholder}
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] transition-colors"
+                  />
+                </div>
+              ))}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Route</label>
+                <select value={nqRoute} onChange={(e) => setNqRoute(e.target.value)} className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#0B63CE]">
+                  <option>UK → Ghana (Air)</option>
+                  <option>China → Ghana (Sea &amp; Air)</option>
+                  <option>USA → Ghana (Air)</option>
+                  <option>Dubai → Ghana (Air)</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Method</label>
+                <select value={nqMethod} onChange={(e) => setNqMethod(e.target.value)} className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#0B63CE]">
+                  <option>Air Freight</option>
+                  <option>Sea &amp; Air Freight</option>
+                  <option>Door Delivery</option>
+                </select>
+              </div>
+              <div className="col-span-2 space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Notes</label>
+                <textarea value={nqNotes} onChange={(e) => setNqNotes(e.target.value)} rows={3} placeholder="Any special requirements..." className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B63CE] resize-none" />
+              </div>
+              <div className="col-span-2 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setShowNewQuote(false)} className="px-4 py-2 text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit" disabled={nqSaving} className="flex items-center gap-2 px-4 py-2 bg-[#0B63CE] hover:bg-[#0952AD] disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-colors">
+                  <Save className="w-3.5 h-3.5" />
+                  {nqSaving ? 'Saving...' : 'Create Quote'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

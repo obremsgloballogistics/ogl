@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
+import { NavLink, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Truck,
@@ -28,8 +28,8 @@ import {
   LogOut,
   QrCode,
   Smartphone,
-  Camera
-  ,Send
+  Camera,
+  Send
 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useSiteSettings } from '../hooks/useSiteSettings';
@@ -60,10 +60,36 @@ import { AdminCard } from '../components/admin/AdminUI';
 
 const ACCESS_DENIED_MESSAGE = 'You do not have permission to access this section.';
 
+const PAGE_TITLES: Record<string, string> = {
+  '': 'Dashboard',
+  'shipments': 'Shipments',
+  'qr-scanner': 'QR & SMS Hub',
+  'tracking-events': 'Tracking Events',
+  'customers': 'Customers',
+  'quotes': 'Quotes',
+  'invoices': 'Invoices',
+  'documents': 'Documents',
+  'services': 'Services & Rates',
+  'shipping-presets': 'Shipping Presets',
+  'routes': 'Routes & Corridors',
+  'messages': 'Messages',
+  'broadcasts': 'Broadcasts',
+  'testimonials': 'Testimonials',
+  'faqs': 'FAQs',
+  'blog': 'Blog & News',
+  'media': 'Media Library',
+  'users': 'Users & Roles',
+  'notifications': 'Notifications',
+  'analytics': 'Analytics',
+  'audit': 'Activity Log',
+  'settings': 'System Settings',
+};
+
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { settings } = useSiteSettings();
   const location = useLocation();
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('obrems_user') || 'null');
   const token = localStorage.getItem('obrems_token');
   const userName = currentUser?.name || currentUser?.email?.split('@')[0] || 'User';
@@ -143,6 +169,8 @@ export default function AdminLayout() {
     return routeSections[route];
   };
   const activeSection = sectionForPath(location.pathname);
+  const currentRoute = location.pathname.replace(/^\/admin\/?/, '').split('/')[0];
+  const pageTitle = PAGE_TITLES[currentRoute] ?? 'Admin Panel';
 
   if (!token || !currentUser) return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
 
@@ -262,7 +290,7 @@ export default function AdminLayout() {
               <Menu className="w-5 h-5" />
             </button>
 
-            <h1 className="text-xl font-bold text-[#063B66] tracking-tight">Dashboard</h1>
+            <h1 className="text-xl font-bold text-[#063B66] tracking-tight">{pageTitle}</h1>
           </div>
 
           {/* Search Bar */}
@@ -279,14 +307,22 @@ export default function AdminLayout() {
 
           {/* Top Right Profile & Actions */}
           <div className="flex items-center gap-4">
-            <button aria-label="Notifications" className="relative p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors">
+            <button
+              aria-label="Notifications"
+              onClick={() => navigate('notifications')}
+              className="relative p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors"
+            >
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 8
               </span>
             </button>
 
-            <button aria-label="Messages" className="p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors">
+            <button
+              aria-label="Messages"
+              onClick={() => navigate('messages')}
+              className="p-2 text-slate-400 hover:text-[#0B63CE] hover:bg-blue-50 rounded-lg transition-colors"
+            >
               <MessageSquare className="w-5 h-5" />
             </button>
 

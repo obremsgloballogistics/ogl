@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ComponentType, SVGProps } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Package,
   Truck,
@@ -34,6 +35,7 @@ import api from '../../services/api';
 
 export default function AdminDashboardPage() {
   const [analytics, setAnalytics] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -339,7 +341,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#063B66]">Recent Shipments</h3>
-            <button className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
+            <button onClick={() => navigate('../shipments')} className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
           </div>
 
           <div className="overflow-x-auto">
@@ -367,7 +369,7 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">{row.updated}</td>
                     <td className="py-3 px-3 text-right">
-                      <button className="text-[#0B63CE] font-bold hover:underline">View</button>
+                      <button onClick={() => navigate('../shipments')} className="text-[#0B63CE] font-bold hover:underline">View</button>
                     </td>
                   </tr>
                 ))}
@@ -380,7 +382,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#063B66]">Recent Quote Requests</h3>
-            <button className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
+            <button onClick={() => navigate('../quotes')} className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
           </div>
 
           <div className="overflow-x-auto">
@@ -420,7 +422,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#063B66]">Top Customers</h4>
-            <button className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
+            <button onClick={() => navigate('../customers')} className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
           </div>
           <div className="space-y-3">
             {topCustomers.map((c, i) => (
@@ -444,7 +446,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#063B66]">Top Routes</h4>
-            <button className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
+            <button onClick={() => navigate('../services')} className="text-xs font-bold text-[#0B63CE] hover:underline">View All</button>
           </div>
           <div className="space-y-3.5 pt-1">
             {topRoutes.map((r) => (
