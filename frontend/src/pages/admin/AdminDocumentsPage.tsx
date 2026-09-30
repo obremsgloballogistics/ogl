@@ -11,6 +11,7 @@ import {
   Upload,
   Calendar,
   Lock,
+  FileText,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';

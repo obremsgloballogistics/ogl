@@ -15,9 +15,7 @@ import {
   X,
   Save,
   Plane,
-  Ship,
-  ChevronLeft,
-  ChevronRight
+  Ship
 } from 'lucide-react';
 import api from '../../services/api';
 
