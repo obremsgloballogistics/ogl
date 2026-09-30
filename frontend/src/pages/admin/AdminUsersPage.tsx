@@ -376,10 +376,10 @@ export default function AdminUsersPage() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
-          </div>
           </div>
         )}
 
