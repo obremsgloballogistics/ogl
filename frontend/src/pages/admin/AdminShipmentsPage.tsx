@@ -234,18 +234,23 @@ export default function AdminShipmentsPage() {
   const presetPricing = useMemo(() => {
     if (!selectedPresetId || !presetPricingMethod) return null;
 
-    const weight = Number(formWeight) || 0;
+    const actualWeight = Number(formWeight) || 0;
+    const lenCm = dimensionUnit === 'm' ? Number(formLength) * 100 : dimensionUnit === 'in' ? Number(formLength) * 2.54 : Number(formLength);
+    const widCm = dimensionUnit === 'm' ? Number(formBreadth) * 100 : dimensionUnit === 'in' ? Number(formBreadth) * 2.54 : Number(formBreadth);
+    const hgtCm = dimensionUnit === 'm' ? Number(formHeight) * 100 : dimensionUnit === 'in' ? Number(formHeight) * 2.54 : Number(formHeight);
+    const volWeight = (lenCm > 0 && widCm > 0 && hgtCm > 0) ? (lenCm * widCm * hgtCm) / 5000 : 0;
+    const chargeableWeight = Math.max(actualWeight, volWeight);
     const cbm = calculatedCbm || 0;
 
     let baseCharge = 0;
     if (presetPricingMethod === 'Per KG') {
-      baseCharge = weight * presetRate;
+      baseCharge = chargeableWeight * presetRate;
     } else if (presetPricingMethod === 'Per CBM') {
       baseCharge = cbm * presetRate;
     } else if (presetPricingMethod === 'Fixed Delivery Fee') {
       baseCharge = presetFixedFee;
     } else if (presetPricingMethod === 'Per KG + Fixed Fee') {
-      baseCharge = weight * presetRate + presetFixedFee;
+      baseCharge = chargeableWeight * presetRate + presetFixedFee;
     }
 
     baseCharge = Math.max(baseCharge, presetMinCharge);
@@ -254,15 +259,15 @@ export default function AdminShipmentsPage() {
     const insuranceFee = presetInsurance;
     const customsFee = presetCustoms;
     const subtotal = baseCharge + handlingFee + insuranceFee + customsFee;
-    const taxAmount = subtotal * (presetTax / 100);
-    const discountAmount = subtotal * (presetDiscount / 100);
+    const taxAmount = presetTax > 0 ? (presetTax < 1 ? subtotal * presetTax : subtotal * (presetTax / 100)) : 0;
+    const discountAmount = presetDiscount > 0 ? (presetDiscount < 1 ? subtotal * presetDiscount : subtotal * (presetDiscount / 100)) : 0;
     const total = Math.max(0, subtotal + taxAmount - discountAmount);
 
-    return { baseCharge, handlingFee, insuranceFee, customsFee, taxAmount, discountAmount, subtotal, total };
+    return { baseCharge, handlingFee, insuranceFee, customsFee, taxAmount, discountAmount, subtotal, total, chargeableWeight, volWeight };
   }, [
     selectedPresetId, presetPricingMethod, presetRate, presetFixedFee, presetMinCharge,
     presetHandlingFee, presetInsurance, presetCustoms, presetTax, presetDiscount,
-    formWeight, calculatedCbm,
+    formWeight, calculatedCbm, formLength, formBreadth, formHeight, dimensionUnit
   ]);
 
   // Auto-fill amount due whenever preset pricing changes

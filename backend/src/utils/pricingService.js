@@ -60,9 +60,10 @@ function calculateShipping(preset, shipment = {}) {
   const handlingFee = Number(preset.additionalHandlingFee) || 0;
   const insuranceFee = Number(preset.insuranceFee) || 0;
   const customsFee = Number(preset.customsFee) || 0;
-  const tax = Number(preset.tax) || 0;
-  const discount = Number(preset.discount) || 0;
-  const total = roundMoney(subtotal + handlingFee + insuranceFee + customsFee + tax - discount);
+  const baseWithFees = subtotal + handlingFee + insuranceFee + customsFee;
+  const tax = Number(preset.tax) > 0 ? (Number(preset.tax) < 1 ? baseWithFees * Number(preset.tax) : baseWithFees * (Number(preset.tax) / 100)) : 0;
+  const discount = Number(preset.discount) > 0 ? (Number(preset.discount) < 1 ? baseWithFees * Number(preset.discount) : baseWithFees * (Number(preset.discount) / 100)) : 0;
+  const total = roundMoney(Math.max(0, baseWithFees + tax - discount));
   return {
     currency: preset.currency,
     pricingMethod: preset.pricingMethod,
