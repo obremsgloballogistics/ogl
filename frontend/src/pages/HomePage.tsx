@@ -121,12 +121,26 @@ export default function HomePage() {
       {settings?.advertBanner?.enabled && (settings.advertBanner.title || settings.advertBanner.text) && (
         <section className="border-b border-slate-200 bg-white">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 px-4 py-4">
-            {settings.advertBanner.imageUrl && <img src={settings.advertBanner.imageUrl} alt="" className="h-14 w-24 rounded-lg object-cover" />}
-            <div><p className="text-sm font-extrabold text-[#063B66]">{settings.advertBanner.title}</p><p className="mt-1 text-xs text-slate-600">{settings.advertBanner.text}</p></div>
-            {settings.advertBanner.buttonText && settings.advertBanner.buttonUrl && <a href={settings.advertBanner.buttonUrl} className="inline-flex items-center gap-2 rounded-lg bg-[#063B66] px-4 py-2 text-xs font-bold text-white hover:bg-[#0B63CE]"><span>{settings.advertBanner.buttonText}</span><ArrowRight className="h-4 w-4" /></a>}
+            {settings.advertBanner.imageUrl && (
+              <img src={settings.advertBanner.imageUrl} alt="" className="h-14 w-24 rounded-lg object-cover anim-fade-in delay-100" />
+            )}
+            <div>
+              <p className="text-sm font-extrabold text-[#063B66] anim-slide-right delay-150">{settings.advertBanner.title}</p>
+              <p className="mt-1 text-xs text-slate-600 anim-slide-right delay-250">{settings.advertBanner.text}</p>
+            </div>
+            {settings.advertBanner.buttonText && settings.advertBanner.buttonUrl && (
+              <a
+                href={settings.advertBanner.buttonUrl}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#063B66] px-4 py-2 text-xs font-bold text-white hover:bg-[#0B63CE] anim-slide-left delay-300 transition-all hover:scale-105"
+              >
+                <span>{settings.advertBanner.buttonText}</span>
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            )}
           </div>
         </section>
       )}
+
       {/* HERO SECTION */}
       <section className="relative text-white pt-20 pb-28 overflow-hidden min-h-[500px] flex items-center">
         {/* Background Images Auto Slider without Blue Overlay */}
@@ -147,32 +161,32 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl py-8">
             {/* Top Subtitle Tag */}
-            <span className="inline-block text-xs font-bold uppercase tracking-[0.3em] text-slate-300 mb-8 fade-up fade-up-delay-100">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.3em] text-sky-300 mb-8 anim-fade-down delay-100">
               {settings.homepageHero?.subtitle || settings.heroSubtitle}
             </span>
 
-            {/* Main Headline formatted on 2 clean lines */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white mb-8 fade-up fade-up-delay-200">
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white mb-8 anim-fade-up delay-200">
               {settings.homepageHero?.headline || settings.heroHeadline}
             </h1>
 
             {/* Supporting Text */}
-            <p className="text-lg sm:text-xl text-slate-200 font-normal leading-relaxed mb-12 max-w-2xl fade-up fade-up-delay-300">
+            <p className="text-lg sm:text-xl text-slate-200 font-normal leading-relaxed mb-12 max-w-2xl anim-fade-up delay-300">
               {settings.homepageHero?.description || settings.heroSubtitle}
             </p>
 
             {/* Hero CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-6 mb-14">
+            <div className="flex flex-wrap items-center gap-6 mb-14 anim-fade-up delay-400">
               <Link
                 to="/tracking"
-                            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-slate-100 text-slate-950 text-sm font-semibold hover:bg-white transition-colors shadow-md fade-up fade-up-delay-400"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-slate-100 text-slate-950 text-sm font-semibold hover:bg-white hover:scale-105 transition-all shadow-md"
               >
                 <Package className="w-4 h-4 text-[#0B63CE]" />
                 <span>Track Shipment</span>
               </Link>
               <Link
                 to="/quote"
-                            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg border border-white/30 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors backdrop-blur-sm fade-up fade-up-delay-500"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-lg border border-white/30 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 hover:scale-105 transition-all backdrop-blur-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Get a Quote</span>
@@ -180,13 +194,14 @@ export default function HomePage() {
             </div>
 
             {/* Slide indicators */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 anim-fade-up delay-500">
               {heroImages.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentHeroIndex(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${i === currentHeroIndex ? 'w-8 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/70'
-                    }`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === currentHeroIndex ? 'w-8 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                  }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
@@ -198,12 +213,12 @@ export default function HomePage() {
       {/* 3 FEATURE SERVICE CARDS - FULL OVERLAY BANNER IMAGES */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-8">
-          {serviceCards.map((card) => {
+          {serviceCards.map((card, cardIdx) => {
             const IconComp = card.icon;
             return (
               <div
                 key={card.title}
-                className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[360px] flex flex-col justify-between group"
+                className={`relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[360px] flex flex-col justify-between group anim-fade-up delay-${150 + cardIdx * 150}`}
               >
                 {/* Background Image */}
                 <img
@@ -217,10 +232,10 @@ export default function HomePage() {
 
                 {/* Top Badge / Icon */}
                 <div className="relative z-10 p-6 flex justify-between items-start">
-                  <div className="w-10 h-10 flex items-center justify-center text-white">
+                  <div className="w-10 h-10 flex items-center justify-center text-white anim-float">
                     <IconComp className="w-6 h-6 stroke-[2]" />
                   </div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-sky-400">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-sky-400 anim-slide-left delay-200">
                     {card.routeBadge}
                   </span>
                 </div>
@@ -228,14 +243,14 @@ export default function HomePage() {
                 {/* Content Overlayed directly on Image without background box */}
                 <div className="relative z-10 p-6 space-y-4">
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-white tracking-tight">{card.title}</h3>
-                    <p className="text-sm text-slate-200 leading-relaxed font-normal">{card.description}</p>
+                    <h3 className="text-2xl font-bold text-white tracking-tight anim-fade-up delay-300">{card.title}</h3>
+                    <p className="text-sm text-slate-200 leading-relaxed font-normal anim-fade-up delay-400">{card.description}</p>
                   </div>
 
                   <div className="pt-2">
                     <Link
                       to={card.link}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#063B66] hover:bg-[#0B63CE] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#063B66] hover:bg-[#0B63CE] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md group-hover:translate-x-1 duration-200"
                     >
                       <span>Learn More</span>
                       <ArrowRight className="w-4 h-4" />
@@ -252,43 +267,43 @@ export default function HomePage() {
       <section className="bg-white border-y border-slate-200 py-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            <div className="flex items-center gap-4 justify-center py-2">
-              <Package className="w-8 h-8 text-[#0B63CE] shrink-0" />
+            <div className="flex items-center gap-4 justify-center py-2 anim-fade-up delay-100">
+              <Package className="w-8 h-8 text-[#0B63CE] shrink-0 anim-float" />
               <div>
-                <p className="text-2xl font-extrabold text-[#063B66]">500+</p>
-                <p className="text-xs font-semibold text-slate-500">Shipments Delivered</p>
+                <p className="text-2xl font-extrabold text-[#063B66] anim-slide-right delay-150">500+</p>
+                <p className="text-xs font-semibold text-slate-500 anim-slide-right delay-200">Shipments Delivered</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 justify-center py-2">
-              <Globe className="w-8 h-8 text-[#0B63CE] shrink-0" />
+            <div className="flex items-center gap-4 justify-center py-2 anim-fade-up delay-200">
+              <Globe className="w-8 h-8 text-[#0B63CE] shrink-0 anim-float" />
               <div>
-                <p className="text-2xl font-extrabold text-[#063B66]">2</p>
-                <p className="text-xs font-semibold text-slate-500">Major Routes</p>
+                <p className="text-2xl font-extrabold text-[#063B66] anim-slide-right delay-250">2</p>
+                <p className="text-xs font-semibold text-slate-500 anim-slide-right delay-300">Major Routes</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 justify-center py-2">
-              <Users className="w-8 h-8 text-[#0B63CE] shrink-0" />
+            <div className="flex items-center gap-4 justify-center py-2 anim-fade-up delay-300">
+              <Users className="w-8 h-8 text-[#0B63CE] shrink-0 anim-float" />
               <div>
-                <p className="text-2xl font-extrabold text-[#063B66]">1000+</p>
-                <p className="text-xs font-semibold text-slate-500">Happy Customers</p>
+                <p className="text-2xl font-extrabold text-[#063B66] anim-slide-right delay-350">1000+</p>
+                <p className="text-xs font-semibold text-slate-500 anim-slide-right delay-400">Happy Customers</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 justify-center py-2">
-              <Calendar className="w-8 h-8 text-[#0B63CE] shrink-0" />
+            <div className="flex items-center gap-4 justify-center py-2 anim-fade-up delay-400">
+              <Calendar className="w-8 h-8 text-[#0B63CE] shrink-0 anim-float" />
               <div>
-                <p className="text-2xl font-extrabold text-[#063B66]">10+</p>
-                <p className="text-xs font-semibold text-slate-500">Years of Experience</p>
+                <p className="text-2xl font-extrabold text-[#063B66] anim-slide-right delay-450">10+</p>
+                <p className="text-xs font-semibold text-slate-500 anim-slide-right delay-500">Years of Experience</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 justify-center py-2 col-span-2 md:col-span-1">
-              <ShieldCheck className="w-8 h-8 text-[#0B63CE] shrink-0" />
+            <div className="flex items-center gap-4 justify-center py-2 col-span-2 md:col-span-1 anim-fade-up delay-500">
+              <ShieldCheck className="w-8 h-8 text-[#0B63CE] shrink-0 anim-float" />
               <div>
-                <p className="text-2xl font-extrabold text-[#063B66]">99%</p>
-                <p className="text-xs font-semibold text-slate-500">On-Time Delivery</p>
+                <p className="text-2xl font-extrabold text-[#063B66] anim-slide-right delay-550">99%</p>
+                <p className="text-xs font-semibold text-slate-500 anim-slide-right delay-600">On-Time Delivery</p>
               </div>
             </div>
           </div>
@@ -310,18 +325,18 @@ export default function HomePage() {
           {/* Content Overlayed directly on Image */}
           <div className="relative z-10 max-w-2xl space-y-6 text-white">
             <div>
-                        <span className="text-xs font-bold text-sky-400 uppercase tracking-[0.25em] mb-2 block fade-up fade-up-delay-200">
+              <span className="text-xs font-bold text-sky-400 uppercase tracking-[0.25em] mb-2 block anim-slide-right delay-150">
                 ABOUT OBREMS GLOBAL LOGISTICS
               </span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight fade-up fade-up-delay-300">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight anim-fade-up delay-250">
                 Your Trusted Logistics Partner
               </h2>
             </div>
 
-                      <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-normal fade-up fade-up-delay-400">
+            <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-normal anim-fade-up delay-350">
               OBREMS GLOBAL LOGISTICS is a leading international shipping and freight forwarding company. We provide reliable, efficient and cost-effective shipping solutions from the UK and China to Ghana.
             </p>
-                      <p className="text-slate-200 text-sm leading-relaxed font-normal fade-up fade-up-delay-450">
+            <p className="text-slate-200 text-sm leading-relaxed font-normal anim-fade-up delay-450">
               We are committed to speed, safety and customer satisfaction every step of the way.
             </p>
 
@@ -332,18 +347,18 @@ export default function HomePage() {
                 'Secure handling of your goods',
                 'Competitive rates',
                 'Dedicated customer support',
-                        ].map((item, idx) => (
-                          <div key={item} className={`flex items-center gap-3 fade-in fade-in-delay-${150 + idx * 100}`}>
+              ].map((item, idx) => (
+                <div key={item} className={`flex items-center gap-3 anim-slide-right delay-${200 + idx * 100}`}>
                   <CheckCircle2 className="w-5 h-5 text-sky-400 shrink-0" />
                   <span className="text-sm font-medium text-slate-100">{item}</span>
                 </div>
               ))}
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 anim-fade-up delay-600">
               <Link
                 to="/about"
-                className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg bg-[#063B66] hover:bg-[#0B63CE] text-white font-bold text-sm transition-all shadow-md"
+                className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg bg-[#063B66] hover:bg-[#0B63CE] text-white font-bold text-sm transition-all hover:scale-105 shadow-md"
               >
                 Learn More About Us
               </Link>
@@ -356,17 +371,17 @@ export default function HomePage() {
       <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-bold text-[#0B63CE] uppercase tracking-[0.2em]">
+            <span className="text-xs font-bold text-[#0B63CE] uppercase tracking-[0.2em] anim-fade-down delay-100 inline-block">
               POPULAR ROUTES
             </span>
-            <h2 className="text-3xl font-extrabold text-[#063B66] mt-2">
+            <h2 className="text-3xl font-extrabold text-[#063B66] mt-2 anim-fade-up delay-200">
               Our Major Shipping Routes
             </h2>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
             {/* Route Card 1: UK ↔ Ghana */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 min-h-[400px] flex flex-col justify-between group">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 min-h-[400px] flex flex-col justify-between group anim-slide-right delay-200">
               <img
                 src={ukGhanaImage}
                 alt="UK Ghana Route"
@@ -380,11 +395,11 @@ export default function HomePage() {
               {/* Header inside Card Overlay */}
               <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                  <h3 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 anim-slide-right delay-300">
                     UK <ArrowLeftRight className="w-5 h-5 text-sky-400" /> Ghana
                   </h3>
                 </div>
-                <span className="text-sky-400 text-xs font-bold uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full">
+                <span className="text-sky-400 text-xs font-bold uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full anim-slide-left delay-300">
                   Air Freight
                 </span>
               </div>
@@ -392,15 +407,15 @@ export default function HomePage() {
               {/* Spec Details overlayed directly on Image */}
               <div className="relative z-10 p-6 sm:p-8 space-y-3">
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-sm">
+                  <div className="flex justify-between items-center text-sm anim-fade-up delay-350">
                     <span className="text-slate-300 font-medium">Fast Transit Time</span>
                     <span className="font-bold text-white">Express 1–3 Days | Standard 3–7 Days</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10">
+                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10 anim-fade-up delay-450">
                     <span className="text-slate-300 font-medium">Reliable Service</span>
                     <span className="font-bold text-white">Express &amp; Standard Air</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10">
+                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10 anim-fade-up delay-550">
                     <span className="text-slate-300 font-medium">Safe &amp; Secure</span>
                     <span className="font-bold text-sky-400">100% Guaranteed</span>
                   </div>
@@ -409,7 +424,7 @@ export default function HomePage() {
             </div>
 
             {/* Route Card 2: China -> Ghana */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 min-h-[400px] flex flex-col justify-between group">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 min-h-[400px] flex flex-col justify-between group anim-slide-left delay-200">
               <img
                 src={chinaGhanaImage}
                 alt="China Ghana Route"
@@ -423,9 +438,9 @@ export default function HomePage() {
               {/* Header inside Card Overlay */}
               <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-white tracking-tight">China → Ghana</h3>
+                  <h3 className="text-2xl font-bold text-white tracking-tight anim-slide-right delay-350">China → Ghana</h3>
                 </div>
-                <span className="text-sky-400 text-xs font-bold uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full">
+                <span className="text-sky-400 text-xs font-bold uppercase tracking-wider bg-black/40 px-3 py-1 rounded-full anim-slide-left delay-350">
                   Sea Freight
                 </span>
               </div>
@@ -433,15 +448,15 @@ export default function HomePage() {
               {/* Spec Details overlayed directly on Image */}
               <div className="relative z-10 p-6 sm:p-8 space-y-3">
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-sm">
+                  <div className="flex justify-between items-center text-sm anim-fade-up delay-400">
                     <span className="text-slate-300 font-medium">Ocean Transit Time</span>
                     <span className="font-bold text-white">25 – 35 Days</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10">
+                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10 anim-fade-up delay-500">
                     <span className="text-slate-300 font-medium">Cost Effective</span>
                     <span className="font-bold text-white">Best Market Rates</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10">
+                  <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/10 anim-fade-up delay-600">
                     <span className="text-slate-300 font-medium">Door-to-Door Delivery</span>
                     <span className="font-bold text-sky-400">Nationwide</span>
                   </div>
@@ -450,10 +465,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 anim-fade-up delay-500">
             <Link
               to="/services"
-              className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg bg-[#063B66] text-white text-sm font-semibold hover:bg-[#0B63CE] transition-colors shadow-sm"
+              className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg bg-[#063B66] text-white text-sm font-semibold hover:bg-[#0B63CE] transition-all hover:scale-105 shadow-sm"
             >
               View All Services
             </Link>
