@@ -533,7 +533,7 @@ export default function AdminInvoicesPage() {
       </tr>
     `).join('');
 
-    const logoUrl = inv.companyDetails?.logoUrl || businessSettings?.logoUrl || '/uploads/ogl-logo.png';
+    const logoUrl = inv.companyDetails?.logoUrl || businessSettings?.logoUrl || '/ogllogo-removebg-preview.png';
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1488,14 +1488,12 @@ export default function AdminInvoicesPage() {
                     {/* Top-Left: OGL Logo */}
                     <div className="shrink-0">
                       <img
-                        src={previewInvoice.companyDetails?.logoUrl || businessSettings?.logoUrl || '/uploads/ogl-logo.png'}
+                        src={previewInvoice.companyDetails?.logoUrl || businessSettings?.logoUrl || '/ogllogo-removebg-preview.png'}
                         alt="OGL Logo"
                         className="w-32 h-32 object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
+                          target.src = '/ogllogo-removebg-preview.png';
                         }}
                       />
                       <div className="w-32 h-32 bg-[#0B1E3B] flex-col items-center justify-center p-3 text-center shadow-xs" style={{display:'none'}}>

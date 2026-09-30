@@ -818,9 +818,32 @@ export default function AdminShipmentsPage() {
                         </div>
                       )}
 
-                      {dimensionMode === 'lbh' && Number(formLength) > 0 && Number(formBreadth) > 0 && Number(formHeight) > 0 && (
-                        <p className="text-[11px] font-bold text-[#063B66]">Calculated volume: {calculatedCbm.toFixed(3)} CBM</p>
-                      )}
+                      {dimensionMode === 'lbh' && Number(formLength) > 0 && Number(formBreadth) > 0 && Number(formHeight) > 0 && (() => {
+                        const lenCm = dimensionUnit === 'm' ? Number(formLength) * 100 : dimensionUnit === 'in' ? Number(formLength) * 2.54 : Number(formLength);
+                        const widCm = dimensionUnit === 'm' ? Number(formBreadth) * 100 : dimensionUnit === 'in' ? Number(formBreadth) * 2.54 : Number(formBreadth);
+                        const hgtCm = dimensionUnit === 'm' ? Number(formHeight) * 100 : dimensionUnit === 'in' ? Number(formHeight) * 2.54 : Number(formHeight);
+                        const volKg = (lenCm * widCm * hgtCm) / 5000;
+                        const actualKg = Number(formWeight) || 0;
+                        const chargeableKg = Math.max(actualKg, volKg);
+                        return (
+                          <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-[11px] space-y-1">
+                            <div className="flex justify-between font-semibold text-slate-700">
+                              <span>Volume (CBM):</span>
+                              <span className="font-mono font-bold text-[#063B66]">{calculatedCbm.toFixed(4)} m³</span>
+                            </div>
+                            <div className="flex justify-between text-slate-600">
+                              <span>Volumetric Wt (Air / 5000):</span>
+                              <span className="font-mono font-semibold">{volKg.toFixed(2)} kg</span>
+                            </div>
+                            {actualKg > 0 && (
+                              <div className="flex justify-between font-bold text-[#063B66] pt-1 border-t border-blue-100">
+                                <span>Chargeable Weight:</span>
+                                <span className="font-mono">{chargeableKg.toFixed(2)} kg {chargeableKg === volKg && volKg > actualKg ? '(Volumetric)' : '(Actual)'}</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
