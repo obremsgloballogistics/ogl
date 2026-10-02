@@ -61,6 +61,7 @@ const definitions = {
     title: String,
     message: String,
     type: { type: String, enum: ['Info', 'Warning', 'Urgent'] },
+    scope: { type: String, enum: ['operations'], default: 'operations' },
   },
   Media: {
     uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },

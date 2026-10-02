@@ -3,7 +3,11 @@ const Notification = require('../models/Notification');
 const ALERT_TYPES = ['Info', 'Warning', 'Urgent'];
 
 async function listNotifications(req, res) {
-  const notifications = await Notification.find({ recipient: { $exists: false } })
+  const notifications = await Notification.find({
+    scope: 'operations',
+    createdBy: { $exists: true, $ne: null },
+    recipient: { $exists: false },
+  })
     .sort({ createdAt: -1 })
     .lean();
   res.json({ success: true, data: notifications });
@@ -22,6 +26,7 @@ async function createNotification(req, res) {
     title: title.trim(),
     message: message.trim(),
     type,
+    scope: 'operations',
     createdBy: req.user._id,
   });
   res.status(201).json({ success: true, data: notification });
@@ -30,6 +35,8 @@ async function createNotification(req, res) {
 async function deleteNotification(req, res) {
   const notification = await Notification.findOneAndDelete({
     _id: req.params.id,
+    scope: 'operations',
+    createdBy: { $exists: true, $ne: null },
     recipient: { $exists: false },
   });
   if (!notification) {
