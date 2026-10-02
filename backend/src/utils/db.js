@@ -57,6 +57,10 @@ const definitions = {
   },
   Notification: {
     recipient: { type: Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    title: String,
+    message: String,
+    type: { type: String, enum: ['Info', 'Warning', 'Urgent'] },
   },
   Media: {
     uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
