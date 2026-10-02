@@ -4,51 +4,141 @@ const Customer = require('../models/Customer');
 
 async function getAnalytics(req, res) {
   try {
-    const totalShipments = await Shipment.countDocuments();
-    const allShipments = await Shipment.find();
+    const now = new Date();
+    const monthWindowStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1));
 
-    const monthlyMap = {};
-    for (const s of allShipments) {
-      if (s.createdAt) {
-        const d = new Date(s.createdAt);
-        const y = d.getFullYear();
-        const m = d.getMonth() + 1;
-        const key = `${y}-${m}`;
-        if (!monthlyMap[key]) monthlyMap[key] = { _id: { year: y, month: m }, count: 0 };
-        monthlyMap[key].count++;
-      }
-    }
-    const monthlyShipments = Object.values(monthlyMap)
-      .sort((a, b) => (b._id.year - a._id.year) || (b._id.month - a._id.month))
-      .slice(0, 12);
+    const [
+      totalShipments,
+      totalCustomers,
+      totalQuotes,
+      pendingQuotes,
+      monthlyShipments,
+      byRoute,
+      byMethod,
+      statusDistribution,
+      recentShipmentDocs,
+      recentQuotes,
+      topCustomerCounts,
+    ] = await Promise.all([
+      Shipment.countDocuments(),
+      Customer.countDocuments(),
+      Quote.countDocuments(),
+      Quote.countDocuments({ status: 'Pending' }),
+      Shipment.aggregate([
+        { $match: { createdAt: { $gte: monthWindowStart, $lte: now } } },
+        {
+          $group: {
+            _id: {
+              year: { $year: '$createdAt' },
+              month: { $month: '$createdAt' },
+            },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { '_id.year': 1, '_id.month': 1 } },
+      ]),
+      Shipment.aggregate([
+        {
+          $group: {
+            _id: {
+              $ifNull: [
+                '$route',
+                {
+                  $concat: [
+                    { $ifNull: ['$origin', 'Unknown'] },
+                    ' → ',
+                    { $ifNull: ['$destination', 'Unknown'] },
+                  ],
+                },
+              ],
+            },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1, _id: 1 } },
+      ]),
+      Shipment.aggregate([
+        {
+          $group: {
+            _id: { $ifNull: ['$shippingMethod', 'Unknown'] },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1, _id: 1 } },
+      ]),
+      Shipment.aggregate([
+        {
+          $group: {
+            _id: { $ifNull: ['$status', 'Unknown'] },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1, _id: 1 } },
+      ]),
+      Shipment.find()
+        .populate('customer', 'name email')
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean(),
+      Quote.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Shipment.aggregate([
+        { $match: { customer: { $exists: true, $ne: null } } },
+        { $group: { _id: '$customer', shipmentCount: { $sum: 1 } } },
+        { $sort: { shipmentCount: -1, _id: 1 } },
+        { $limit: 5 },
+      ]),
+    ]);
 
-    const routeMap = {};
-    for (const s of allShipments) {
-      const o = s.origin || 'Unknown';
-      routeMap[o] = (routeMap[o] || 0) + 1;
-    }
-    const byRoute = Object.keys(routeMap).map(k => ({ _id: k, count: routeMap[k] }));
+    const topCustomerDocs = topCustomerCounts.length
+      ? await Customer.find({
+          _id: { $in: topCustomerCounts.map((entry) => entry._id) },
+        })
+          .select('name email')
+          .lean()
+      : [];
+    const topCustomersById = new Map(
+      topCustomerDocs.map((customer) => [String(customer._id), customer]),
+    );
+    const topCustomers = topCustomerCounts.flatMap((entry) => {
+      const customer = topCustomersById.get(String(entry._id));
+      return customer
+        ? [{
+            _id: customer._id,
+            name: customer.name || customer.email || 'Customer',
+            email: customer.email || '',
+            shipmentCount: entry.shipmentCount,
+          }]
+        : [];
+    });
 
-    const methodMap = {};
-    for (const s of allShipments) {
-      const o = s.shippingMethod || 'Unknown';
-      methodMap[o] = (methodMap[o] || 0) + 1;
-    }
-    const byMethod = Object.keys(methodMap).map(k => ({ _id: k, count: methodMap[k] }));
-
-    const statusMap = {};
-    for (const s of allShipments) {
-      const o = s.status || 'Unknown';
-      statusMap[o] = (statusMap[o] || 0) + 1;
-    }
-    const statusDistribution = Object.keys(statusMap).map(k => ({ _id: k, count: statusMap[k] }));
-
-    const totalQuotes = await Quote.countDocuments();
-    const totalCustomers = await Customer.countDocuments();
+    const recentShipments = recentShipmentDocs.map((shipment) => ({
+      _id: shipment._id,
+      trackingNumber: shipment.trackingNumber || '',
+      customer: shipment.customer || null,
+      origin: shipment.origin || '',
+      destination: shipment.destination || '',
+      route: shipment.route || '',
+      status: shipment.status || 'Unknown',
+      createdAt: shipment.createdAt || null,
+      updatedAt: shipment.updatedAt || shipment.createdAt || null,
+    }));
 
     res.json({
       success: true,
-      data: { totalShipments, monthlyShipments, byRoute, byMethod, statusDistribution, totalQuotes, totalCustomers },
+      data: {
+        totalShipments,
+        totalCustomers,
+        totalQuotes,
+        pendingQuotes,
+        monthlyShipments,
+        byRoute,
+        topRoutes: byRoute.slice(0, 5),
+        byMethod,
+        statusDistribution,
+        recentShipments,
+        recentQuotes,
+        topCustomers,
+      },
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
